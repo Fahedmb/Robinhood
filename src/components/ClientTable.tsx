@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect, useState } from "react";
 
 export interface Client {
@@ -72,7 +74,6 @@ export default function ClientTable() {
     .filter((c) => c.status === "pending")
     .reduce((sum, c) => sum + c.payment, 0);
 
-  return (
     <div className="w-full max-w-2xl mx-auto p-4 space-y-4">
       <div className="flex justify-end">
         <button
@@ -88,121 +89,58 @@ export default function ClientTable() {
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm table-auto border border-gray-200 dark:border-gray-700">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Payment</th>
-              <th className="p-2 text-left">Status</th>
-              <th className="p-2 text-left">Days Left</th>
-              <th className="p-2 text-left">Referral</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client.id} className="odd:bg-gray-50 dark:odd:bg-gray-800">
-                <td className="p-2">{client.name}</td>
-                <td className="p-2">{client.payment.toFixed(2)}</td>
-                <td className="p-2 capitalize">{client.status}</td>
-                <td className="p-2">{daysRemaining(client.orderDate)}</td>
-                <td className="p-2">{client.referral}</td>
-                <td className="p-2 flex gap-2">
-                  <button
-                    onClick={() => editClient(client)}
-                    className="text-blue-600 underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteClient(client.id)}
-                    className="text-red-600 underline"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr className="bg-gray-200 dark:bg-gray-700 font-semibold">
-              <td className="p-2">Totals</td>
-              <td className="p-2">{(totalDone + totalPending).toFixed(2)}</td>
-              <td className="p-2" colSpan={2}>
-                Done: {totalDone.toFixed(2)} | Pending: {totalPending.toFixed(2)}
-              </td>
-              <td className="p-2" colSpan={2}></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <form
-            onSubmit={addOrUpdateClient}
-            className="bg-white dark:bg-zinc-800 p-6 rounded shadow space-y-4 w-full max-w-md"
-          >
-            <h2 className="text-lg font-semibold">
-              {editing ? "Edit Client" : "Add Client"}
-            </h2>
-            <input
-              className="border p-2 rounded w-full"
-              name="name"
-              placeholder="Client name"
-              value={form.name}
-              onChange={handleChange}
-              required
-            />
-            <input
-              className="border p-2 rounded w-full"
-              type="number"
-              name="payment"
-              placeholder="Payment amount"
-              value={form.payment}
-              onChange={handleChange}
-              required
-            />
-            <input
-              className="border p-2 rounded w-full"
-              type="date"
-              name="orderDate"
-              value={form.orderDate}
-              onChange={handleChange}
-              required
-            />
-            <select
-              className="border p-2 rounded w-full"
-              name="status"
-              value={form.status}
-              onChange={handleChange}
-            >
-              <option value="pending">Pending</option>
-              <option value="done">Done</option>
-            </select>
-            <input
-              className="border p-2 rounded w-full"
-              name="referral"
-              placeholder="Referral source"
-              value={form.referral}
-              onChange={handleChange}
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowModal(false);
-                  setEditing(null);
-                }}
-                className="px-3 py-1 rounded border"
-              >
-                Cancel
-              </button>
-              <button type="submit" className="px-3 py-1 rounded bg-blue-600 text-white">
-                {editing ? "Update" : "Add"}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+    <div className="w-full max-w-2xl mx-auto p-4">
+      <form onSubmit={addOrUpdateClient} className="flex flex-col gap-2 mb-4">
+        <input
+          className="border p-2 rounded"
+          name="name"
+          placeholder="Client name"
+          value={form.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          className="border p-2 rounded"
+          type="number"
+          name="payment"
+          placeholder="Payment amount"
+          value={form.payment}
+          onChange={handleChange}
+          required
+        />
+        <input
+          className="border p-2 rounded"
+          type="date"
+          name="orderDate"
+          value={form.orderDate}
+          onChange={handleChange}
+          required
+        />
+        <select
+          className="border p-2 rounded"
+          name="status"
+          value={form.status}
+          onChange={handleChange}
+        >
+          <option value="pending">Pending</option>
+          <option value="done">Done</option>
+        </select>
+        <input
+          className="border p-2 rounded"
+          name="referral"
+          placeholder="Referral source"
+          value={form.referral}
+          onChange={handleChange}
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white rounded p-2"
+        >
+          {editing ? "Update" : "Add"} Client
+        </button>
+      </form>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm">
     </div>
   );
 }
