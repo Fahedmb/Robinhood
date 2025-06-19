@@ -14,6 +14,7 @@ export interface Client {
 export default function ClientTable() {
   const [clients, setClients] = useState<Client[]>([]);
   const [editing, setEditing] = useState<Client | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -46,11 +47,13 @@ export default function ClientTable() {
       setClients((prev) => [...prev, form]);
     }
     setForm({ ...emptyClient, id: Date.now() });
+    setShowModal(false);
   }
 
   function editClient(client: Client) {
     setEditing(client);
     setForm(client);
+    setShowModal(true);
   }
 
   function deleteClient(id: number) {
@@ -71,7 +74,21 @@ export default function ClientTable() {
     .filter((c) => c.status === "pending")
     .reduce((sum, c) => sum + c.payment, 0);
 
-  return (
+    <div className="w-full max-w-2xl mx-auto p-4 space-y-4">
+      <div className="flex justify-end">
+        <button
+          onClick={() => {
+            setEditing(null);
+            setForm({ ...emptyClient, id: Date.now() });
+            setShowModal(true);
+          }}
+          className="bg-blue-600 text-white px-4 py-2 rounded shadow"
+        >
+          Add Client
+        </button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm table-auto border border-gray-200 dark:border-gray-700">
     <div className="w-full max-w-2xl mx-auto p-4">
       <form onSubmit={addOrUpdateClient} className="flex flex-col gap-2 mb-4">
         <input
@@ -124,53 +141,6 @@ export default function ClientTable() {
       </form>
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
-          <thead className="bg-gray-200 dark:bg-gray-700">
-            <tr>
-              <th className="p-2 text-left">Name</th>
-              <th className="p-2 text-left">Payment</th>
-              <th className="p-2 text-left">Status</th>
-              <th className="p-2 text-left">Days Left</th>
-              <th className="p-2 text-left">Referral</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client.id} className="odd:bg-gray-50 dark:odd:bg-gray-800">
-                <td className="p-2">{client.name}</td>
-                <td className="p-2">{client.payment.toFixed(2)}</td>
-                <td className="p-2 capitalize">{client.status}</td>
-                <td className="p-2">{daysRemaining(client.orderDate)}</td>
-                <td className="p-2">{client.referral}</td>
-                <td className="p-2 flex gap-2">
-                  <button
-                    onClick={() => editClient(client)}
-                    className="text-blue-600 underline"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => deleteClient(client.id)}
-                    className="text-red-600 underline"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr className="bg-gray-200 dark:bg-gray-700 font-semibold">
-              <td className="p-2">Totals</td>
-              <td className="p-2">{(totalDone + totalPending).toFixed(2)}</td>
-              <td className="p-2" colSpan={2}>
-                Done: {totalDone.toFixed(2)} | Pending: {totalPending.toFixed(2)}
-              </td>
-              <td className="p-2" colSpan={2}></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
     </div>
   );
 }
